@@ -27,6 +27,18 @@
 
 模型 ID：`qwen3.8-livetranslate-flash-realtime`。输入源语言自动识别，目标语言固定为中文，默认只请求文字输出。
 
+## 自动构建与下载
+
+[![Windows 构建](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml/badge.svg)](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml)
+
+推送到 `main`、向 `main` 提交 PR，或在 Actions 页面点击 **Run workflow**，都会触发 Windows x64 便携版构建。
+
+1. 打开 [Build Windows app](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml)。
+2. 进入一次成功的运行，在 **Artifacts** 中下载 `qwen-live-translate-windows-x64`（需要登录 GitHub）。
+3. 解压下载文件及其中的应用压缩包，打开 `俄语实时翻译助手.exe`。
+
+产物包含 .NET 运行时和使用文档，保留 14 天。自动构建不需要 API Key，不调用云端模型；离线自检验证字幕处理及接口地址，并跳过 CI 环境没有声卡的音频检查。
+
 ## 构建与运行
 
 安装 [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)，然后在项目目录运行：

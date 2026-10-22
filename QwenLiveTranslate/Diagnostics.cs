@@ -39,12 +39,19 @@ public static class Diagnostics
                 settings.Endpoint = "http://invalid.test";
                 try { settings.GetUri(); throw new Exception("未拒绝明文接口。"); } catch (InvalidOperationException) { }
                 report.Add("PASS: 模型地址及加密连接校验。");
-                var devices = SystemAudio.Devices();
-                if (devices.Count == 0) throw new Exception("未发现系统声音设备。");
-                using var audio = new SystemAudio(devices[0].Id);
-                audio.Start();
-                await Task.Delay(1200);
-                report.Add($"PASS: WASAPI 16kHz 单声道 PCM16 采集启动，{devices.Count} 个播放设备。");
+                if (args.Contains("--skip-audio"))
+                {
+                    report.Add("SKIP: 已跳过声音设备检查（适用于 CI 无声卡环境）。");
+                }
+                else
+                {
+                    var devices = SystemAudio.Devices();
+                    if (devices.Count == 0) throw new Exception("未发现系统声音设备。");
+                    using var audio = new SystemAudio(devices[0].Id);
+                    audio.Start();
+                    await Task.Delay(1200);
+                    report.Add($"PASS: WASAPI 16kHz 单声道 PCM16 采集启动，{devices.Count} 个播放设备。");
+                }
             }
             if (args.Contains("--probe"))
             {

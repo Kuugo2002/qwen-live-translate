@@ -27,6 +27,18 @@ Use it while watching Russian videos, listening to live streams, or following on
 
 Model ID: `qwen3.8-livetranslate-flash-realtime`. The source language is detected automatically. The target language is Chinese, and only text output is requested by default.
 
+## Automated builds and downloads
+
+[![Windows build](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml/badge.svg)](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml)
+
+Pushes to `main`, pull requests targeting `main`, and **Run workflow** on the Actions page trigger a Windows x64 portable build.
+
+1. Open [Build Windows app](https://github.com/Kuugo2002/qwen-live-translate/actions/workflows/build-windows.yml).
+2. Open a successful run and download `qwen-live-translate-windows-x64` under **Artifacts** (GitHub sign-in required).
+3. Extract the download and the application archive inside it, then open `俄语实时翻译助手.exe`.
+
+The package includes the .NET runtime and documentation. Artifacts are retained for 14 days. CI requires no API key and makes no cloud model calls; its offline self-test checks transcript handling and endpoint validation while skipping audio hardware checks on the runner.
+
 ## Build and run
 
 Install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), then run from the project directory:

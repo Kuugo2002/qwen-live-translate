@@ -1,0 +1,68 @@
+name: Build Windows app
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Windows x64 portable
+    runs-on: windows-2025
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build portable application
+        run: ./build.ps1 -Portable
+
+      - name: Run offline self-test
+        timeout-minutes: 2
+        run: |
+          $appPath = Join-Path $PWD 'dist/俄语实时翻译助手/俄语实时翻译助手.exe'
+          $process = Start-Process -FilePath $appPath -ArgumentList '--self-test', '--skip-audio' -PassThru -Wait
+          if (Test-Path 'test-results/self-test.txt') {
+            Get-Content 'test-results/self-test.txt'
+          }
+          if ($process.ExitCode -ne 0) {
+            throw "Offline self-test failed (exit code $($process.ExitCode))."
+          }
+
+      - name: Package application
+        run: |
+          $sourcePath = Join-Path $PWD 'dist/俄语实时翻译助手'
+          $archivePath = Join-Path $PWD 'dist/qwen-live-translate-windows-x64.zip'
+          Compress-Archive -LiteralPath $sourcePath -DestinationPath $archivePath -Force
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qwen-live-translate-windows-x64
+          path: dist/qwen-live-translate-windows-x64.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
