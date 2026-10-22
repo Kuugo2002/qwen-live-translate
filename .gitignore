@@ -1,0 +1,27 @@
+# Local tools and generated files
+.tools/
+**/bin/
+**/obj/
+dist/
+test-results/
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.log
+
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pfx
+*.p12
+*.dpapi
+secret.bin
+settings.local.json
+
+# OS files
+Thumbs.db
+.DS_Store
